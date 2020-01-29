@@ -14,3 +14,12 @@ module.exports.getAllUsers=(callback)=>{
     });
     config.mysqlConnection.end();
 }
+
+module.exports.addUsers=(insertObject,callback)=>{
+    var query='insert into `users` SET ?';
+    config.mysqlConnection.connect();
+    var query = config.mysqlConnection.query(query,insertObject,function(error, results, fields){
+        callback(null,results);
+    });
+    config.mysqlConnection.end();
+}
