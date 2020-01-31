@@ -3,20 +3,25 @@ const express   =   require('express');
 const app       =   express();
 
 app.get('/',(req,res)=>{
-
-    var response=false;
-    
-    response = users.getAllUsers(function(err,data){
+    users.getAllUsers(function(err,data){
         console.log(data);
-        return data;   
-    })
-    
-    console.log(response);
-    
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(response));
+        res.json(data); 
+    });
 });
 
-app.listen(3000,()=>{
-    console.log("listening on port 3000");
+app.get('/addUser',(req,res)=>{
+    var data={
+        name:'jack',
+        email:'jack@jumping.com',
+        username:'jackinthebox',
+        password:'jumpingJack'
+    };
+    users.addUser(function(err,data){
+        console.log(data);
+        res.json(data); 
+    });
+});
+
+app.listen(4000,()=>{
+    console.log("listening on port 4000");
 });
