@@ -1,24 +1,29 @@
 var users       =   require('./model/users');
 const express   =   require('express');
 const app       =   express();
+var bodyParser  =   require('body-parser');
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.get('/',(req,res)=>{
-    users.getAllUsers(function(err,data){
-        console.log(data);
-        res.json(data); 
+    response = users.getAllUsers(function(err,data){
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(data));  
     });
 });
 
-app.get('/addUser',(req,res)=>{
-    var data={
-        name:'jack',
-        email:'jack@jumping.com',
-        username:'jackinthebox',
-        password:'jumpingJack'
-    };
-    users.addUser(function(err,data){
-        console.log(data);
-        res.json(data); 
+app.get('/addUsers',(req,res)=>{
+    /* var insertObject = {
+        "name":"tushar",
+        "username":"tusharc",
+        "email":"tushar@unboxsocial.com",
+        "password":"876545678"
+    }; */
+    
+    response = users.addUsers(req.body,function(err,data){
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(data));  
     });
 });
 

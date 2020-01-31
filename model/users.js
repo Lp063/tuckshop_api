@@ -15,12 +15,11 @@ module.exports.getAllUsers=(callback)=>{
     config.mysqlConnection.end();
 }
 
-module.exports.addUser=(data)=>{
-    var rows=[];
+module.exports.addUsers=(insertObject,callback)=>{
+    var query='insert into `users` SET ?';
     config.mysqlConnection.connect();
-    config.mysqlConnection.query('insert into users SET ?',data,function(error, results, fields){
-        console.log({error,results,fields});
-        callback(null,{error,results,fields});
+    var query = config.mysqlConnection.query(query,insertObject,function(error, results, fields){
+        callback(null,results);
     });
     config.mysqlConnection.end();
 }
