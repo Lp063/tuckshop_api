@@ -15,11 +15,11 @@ app.get('/',(req,res)=>{
 
 app.get('/addUsers',(req,res)=>{
     /* var insertObject = {
-        "name":"tushar",
-        "username":"tusharc",
-        "email":"tushar@unboxsocial.com",
-        "password":"876545678"
-    }; */
+            "name":"Tanmay",
+            "username":"tanmayb",
+            "email":"tanmayb@unboxsocial.com",
+            "password":"5787543444"
+        }; */
     
     response = users.addUsers(req.body,function(err,data){
         res.setHeader('Content-Type', 'application/json');
