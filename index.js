@@ -1,8 +1,10 @@
 var users       =   require('./model/users');
 const express   =   require('express');
+//var cors        =   require('cors');
 const app       =   express();
 var bodyParser  =   require('body-parser');
 
+//app.use(cors())
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
@@ -13,7 +15,7 @@ app.get('/',(req,res)=>{
     });
 });
 
-app.get('/addUsers',(req,res)=>{
+app.post('/addUsers',(req,res)=>{
     /* var insertObject = {
             "name":"Tanmay",
             "username":"tanmayb",
