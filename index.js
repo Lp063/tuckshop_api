@@ -13,7 +13,7 @@ app.get('/',(req,res)=>{
     });
 });
 
-app.get('/addUsers',(req,res)=>{
+app.get('/addUsers',(req,res)=>{console.log(req);
     /* var insertObject = {
         "name":"tushar",
         "username":"tusharc",
