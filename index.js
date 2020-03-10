@@ -15,9 +15,15 @@ app.get('/getAllUsers',(req,res)=>{
     });
 });
 
-app.post('/addUsers',(req,res)=>{console.log(req);
-    //localhost:4000/addUsers?name=Nash&username=nascar&email=nascar@gmail.com&password=12345678914
-    response = users.addUsers(req.query,function(err,data){
+app.post('/addUsers',(req,res)=>{
+    //localhost:4000/addUsers
+    var insertObject={
+        name:req.body.name,
+        email:req.body.email,
+        username:req.body.username,
+        password:req.body.password,
+    };
+    response = users.addUsers(insertObject,function(err,data){
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(data));  
     });
