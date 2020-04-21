@@ -8,6 +8,7 @@ app.use(cors())
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+var email       =   require('./model/comm_email');
 var users       =   require('./model/users');
 var teams       =   require('./model/teams');
 
@@ -41,16 +42,40 @@ app.get('/api/uniqueEmailCheck',(req,res)=>{
     });
 });
 
-app.post('/api/addUsers',(req,res)=>{
+app.post('/api/addUsers', verifyToken,(req,res)=>{
     /* {
-        "name":"Tanmay",
-        "username":"tanmayb",
-        "email":"tanmayb@unboxsocial.com",
+        "firstName":"Sean",
+        "lastName":"Clair",
+        "contact":"9875647382",
+        "email":"lohit@unboxsocial.com",
         "password":"5787543444"
     }; */
-    response = users.addUsers(req.body,function(err,data){
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(data));  
+
+    jwt.verify(req.token,'kamakazi',(error, authData)=>{
+        if (error) {
+            res.sendStatus(403);
+        } else {
+            response = users.addUsers(req.body,function(err,data){
+                var response = {
+                    success:0,
+                    data:{}
+                };
+
+                if (data.insertId !==0) {
+                    response.success = 1;
+                    response.data = data;
+                }
+
+                res.setHeader('Content-Type', 'application/json');
+                res.json({
+                    authData,
+                    response
+                });
+
+                // post response activities
+                email.accountCreatedEmail(authData);
+            });
+        }
     });
 });
 
