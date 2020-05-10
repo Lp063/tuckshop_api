@@ -24,7 +24,18 @@ module.exports.getAllUsers=(callback)=>{
     config.mysqlConnection.end();
 }
 
-module.exports.addUsers=(insertObject,callback)=>{
+module.exports.getUserDetails=(dataObject,callback)=>{
+    var query='SELECT * FROM `users` where id = '+dataObject.id;//console.log(query);return;
+    config.mysqlConnection.connect(function(err){
+        console.log(err.stack);
+    });
+    var query = config.mysqlConnection.query(query,function(error, results, fields){console.log(results);
+        callback(null,results);
+    });
+    config.mysqlConnection.end();
+};
+
+module.exports.addUser=(insertObject,callback)=>{
     var query='insert into `users` SET ?';
     config.mysqlConnection.connect();
     var query = config.mysqlConnection.query(query,insertObject,function(error, results, fields){

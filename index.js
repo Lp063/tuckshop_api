@@ -42,7 +42,7 @@ app.get('/api/uniqueEmailCheck',(req,res)=>{
     });
 });
 
-app.post('/api/addUsers', verifyToken,(req,res)=>{
+app.post('/api/addUser',async (req,res)=>{
     /* {
         "firstName":"Sean",
         "lastName":"Clair",
@@ -50,33 +50,31 @@ app.post('/api/addUsers', verifyToken,(req,res)=>{
         "email":"lohit@unboxsocial.com",
         "password":"5787543444"
     }; */
+    
+    response = await users.addUser(req.body,function(err,data){
+        var response = {
+            success:0,
+            data:{}
+        };
 
-    jwt.verify(req.token,'kamakazi',(error, authData)=>{
-        if (error) {
-            res.sendStatus(403);
-        } else {
-            response = users.addUsers(req.body,function(err,data){
-                var response = {
-                    success:0,
-                    data:{}
-                };
-
-                if (data.insertId !==0) {
-                    response.success = 1;
-                    response.data = data;
-                }
-
-                res.setHeader('Content-Type', 'application/json');
-                res.json({
-                    authData,
-                    response
-                });
-
-                // post response activities
-                email.accountCreatedEmail(authData);
-            });
+        if (data.insertId !==0) {
+            response.success = 1;
+            response.data = data;
         }
-    });
+        
+        var emailData={
+            firstName:req.body.firstName,
+            lastName:req.body.lastName,
+            to:req.body.email,
+            password:req.body.password
+        };
+        email.accountCreatedEmail(emailData);
+
+        res.setHeader('Content-Type', 'application/json');
+        res.json({
+            response
+        });
+    }); 
 });
 
 //team API
