@@ -7,6 +7,7 @@ var bodyParser  =   require('body-parser');
 app.use(cors())
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use("/email/images",express.static(__dirname + '\\assets\\images\\comm_mail'));
 
 var email       =   require('./model/comm_email');
 var users       =   require('./model/users');
@@ -18,7 +19,7 @@ app.post('/api/login',(req,res)=>{
         email:req.body.loginid,
         password:req.body.loginpass
     };
-    response = users.authentication(data,function(err,data){
+    response = users.authentication(data,function(err,data){ 
         res.setHeader('Content-Type', 'application/json');
         const thisUser = data[0];
         jwt.sign({userData:thisUser},'kamakazi',(err,token)=>{
@@ -42,7 +43,7 @@ app.get('/api/uniqueEmailCheck',(req,res)=>{
     });
 });
 
-app.post('/api/addUser',async (req,res)=>{
+app.post('/api/addUser', (req,res)=>{
     /* {
         "firstName":"Sean",
         "lastName":"Clair",
@@ -51,7 +52,7 @@ app.post('/api/addUser',async (req,res)=>{
         "password":"5787543444"
     }; */
     
-    response = await users.addUser(req.body,function(err,data){
+    response = users.addUser(req.body,function(err,data){
         var response = {
             success:0,
             data:{}
