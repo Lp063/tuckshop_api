@@ -1,5 +1,6 @@
 const dotenv    =   require('dotenv');
 var mysql       =   require('mysql');
+const util      =   require('util');
 var postmark    =   require("postmark");
 dotenv.config();
 
@@ -11,7 +12,7 @@ const mysqlConnection = mysql.createConnection({
     password : process.env.DB_MYSQL_PASSWORD,
     database : process.env.DB_MYSQL_DATABASE
 });
-
+const query = util.promisify(mysqlConnection.query).bind(mysqlConnection);
 mysqlConnection.connect((err)=>{
     if (err) {
         console.log(err);

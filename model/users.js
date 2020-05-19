@@ -22,16 +22,23 @@ module.exports.getAllUsers=(callback)=>{
     config.mysqlConnection.end();
 }
 
-module.exports.getUserDetails=(dataObject,callback)=>{
+module.exports.getUserDetails= async (dataObject,callback)=>{
     var query='SELECT * FROM `users` where id = '+dataObject.id;//console.log(query);return;
-    var query = config.mysqlConnection.query(query,function(error, results, fields){console.log(results);
-        callback(null,results);
+    var query = await config.mysqlConnection.query(query,function(error, results, fields){
+        callback(null,results[0]);
     });
 };
 
-module.exports.addUser=(insertObject,callback)=>{
+module.exports.addUser= async (insertObject,callback)=>{
     var query='insert into `users` SET ?';
-    var query = config.mysqlConnection.query(query,insertObject,function(error, results, fields){
+    var query = await config.mysqlConnection.query(query,insertObject,function(error, results, fields){
+        callback(null,results);
+    });
+}
+
+module.exports.deleteUser= async (insertObject,callback)=>{
+    var query='DELETE FROM `users` WHERE ?';
+    var query = await config.mysqlConnection.query(query,insertObject,function(error, results, fields){
         callback(null,results);
     });
 }

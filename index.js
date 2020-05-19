@@ -29,7 +29,7 @@ app.post('/api/login',(req,res)=>{
 });
 
 //Users API
-app.get('/api/getAllUsers',(req,res)=>{
+app.get('/api/user/getAllUsers',(req,res)=>{
     response = users.getAllUsers(function(err,data){
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(data));  
@@ -43,7 +43,9 @@ app.get('/api/uniqueEmailCheck',(req,res)=>{
     });
 });
 
-app.post('/api/addUser', (req,res)=>{
+
+//User Routes
+app.post('/api/user/add',verifyToken,(req,res)=>{
     /* {
         "firstName":"Sean",
         "lastName":"Clair",
@@ -51,7 +53,6 @@ app.post('/api/addUser', (req,res)=>{
         "email":"lohit@unboxsocial.com",
         "password":"5787543444"
     }; */
-    
     response = users.addUser(req.body,function(err,data){
         var response = {
             success:0,
@@ -78,8 +79,34 @@ app.post('/api/addUser', (req,res)=>{
     }); 
 });
 
+app.get('/api/user/:userId',verifyToken, async (req,res)=>{
+    
+    addUser = await users.getUserDetails({id:req.params.userId},function (err,data){
+        //console.log(data);
+        res.json({
+            data
+        });
+    });
+});
+
+app.put('/api/user/:userId',verifyToken, async (req,res)=>{
+    /* updateUser = await users.updateUser({id:req.params.userId},function (err,data){
+        res.json({
+            data
+        });
+    }); */
+});
+
+app.delete('/api/user/:userId',verifyToken, async (req,res)=>{
+    deleteUser = await users.deleteUser({id:req.params.userId},function (err,data){
+        res.json({
+            data
+        });
+    });
+});
+
 //team API
-app.post('/api/createTeam', verifyToken,(req,res)=>{
+app.post('/api/team', verifyToken,(req,res)=>{
     jwt.verify(req.token,'kamakazi',(error, authData)=>{
         if (error) {
             res.sendStatus(403);
