@@ -8,9 +8,8 @@ module.exports.authentication=(input,callback)=>{
     });
 }
 
-module.exports.getAllUsers=(callback)=>{
+module.exports.getAllUsers=(dataObject,callback)=>{
     var rows=[];
-    config.mysqlConnection.connect();
     config.mysqlConnection.query('SELECT * FROM `users`',function(error, results, fields){
         if (results) {
             results.map(function($object){
@@ -19,7 +18,6 @@ module.exports.getAllUsers=(callback)=>{
             callback(null,rows);
         }
     });
-    config.mysqlConnection.end();
 }
 
 module.exports.getUserDetails= async (dataObject,callback)=>{

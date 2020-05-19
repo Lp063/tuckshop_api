@@ -45,7 +45,28 @@ app.get('/api/uniqueEmailCheck',(req,res)=>{
 
 
 //User Routes
-app.post('/api/user/add',verifyToken,(req,res)=>{
+app.get('/api/user',verifyToken,(req,res)=>{
+    response = users.getAllUsers(req.body,function(err,data){
+        var response = {
+            success:0,
+            data:{}
+        };
+
+        if (err) {
+            response.data   =   err;
+        } else {
+            response.success    =   1;
+            response.data       =   data;
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.json({
+            response
+        });
+    }); 
+});
+
+app.post('/api/user',verifyToken,(req,res)=>{
     /* {
         "firstName":"Sean",
         "lastName":"Clair",
