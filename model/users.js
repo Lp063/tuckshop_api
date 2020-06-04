@@ -34,6 +34,14 @@ module.exports.addUser= async (insertObject,callback)=>{
     });
 }
 
+module.exports.updateUser= async (whereId,insertObject,callback)=>{
+    var updateData=[insertObject,whereId];
+    var query='update `users` SET ? where ?';
+    var query = await config.mysqlConnection.query(query,updateData,function(error, results, fields){
+        callback(null,results);
+    });
+}
+
 module.exports.deleteUser= async (insertObject,callback)=>{
     var query='DELETE FROM `users` WHERE ?';
     var query = await config.mysqlConnection.query(query,insertObject,function(error, results, fields){

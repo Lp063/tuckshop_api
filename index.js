@@ -15,17 +15,39 @@ var teams       =   require('./model/teams');
 
 
 app.post('/api/login',(req,res)=>{
-    var data={
-        email:req.body.loginid,
-        password:req.body.loginpass
+    var invalidLogin={
+        message:"Invalid Credentials"
     };
-    response = users.authentication(data,function(err,data){ 
-        res.setHeader('Content-Type', 'application/json');
-        const thisUser = data[0];
-        jwt.sign({userData:thisUser},'kamakazi',(err,token)=>{
-            res.json({token});
+
+    if (typeof req.body.loginid == "undefined" || req.body.loginid == "undefined") {
+        res.json(invalidLogin);
+    } else {
+        var data={
+            email:req.body.loginid,
+            password:req.body.loginpass
+        };
+        response = users.authentication(data,function(err,data){ 
+            res.setHeader('Content-Type', 'application/json');
+            const thisUser = data[0];
+            if (data.length) {
+                jwt.sign({userData:thisUser},'kamakazi',{expiresIn:60*60},(err,token)=>{
+                    /* console.log(jwt.decode(token).userData)
+                    {
+                        id: 63,
+                        firstName: 'Lohit',
+                        lastName: 'P',
+                        contact: '9875647382',
+                        email: 'double@gmail.com',
+                        password: 'aviator'
+                    } */
+                    res.json({token});
+                });
+            } else {
+                res.json(invalidLogin);
+            }
         });
-    });
+    }
+    
 });
 
 //Users API
@@ -111,11 +133,30 @@ app.get('/api/user/:userId',verifyToken, async (req,res)=>{
 });
 
 app.put('/api/user/:userId',verifyToken, async (req,res)=>{
-    /* updateUser = await users.updateUser({id:req.params.userId},function (err,data){
+    var updateData={
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
+        contact:req.body.contact,
+        /* email:req.body.email,
+        password:req.body.password */
+    }
+    
+    updateUser = await users.updateUser({id:req.body.id},updateData,function (err,data){
+        var response={
+            success:0,
+            message:""
+        };
+
+        if (data.affectedRows) {
+            response.success=1;
+        } else {
+            response.message="Could not update User"
+        }
         res.json({
-            data
+            response
         });
-    }); */
+        
+    });
 });
 
 app.delete('/api/user/:userId',verifyToken, async (req,res)=>{

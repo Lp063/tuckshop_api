@@ -1,24 +1,39 @@
-var users       =   require('../model/users');
 const express   =   require('express');
-const app       =   express();
+const router    =   express.Router();
 
-app.get('/getAllUsers',(req,res)=>{
-    response = users.getAllUsers(function(err,data){
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(data));  
-    });
-});
+var users       =   require('../model/users');
 
-app.post('/addUsers',(req,res)=>{
-    //localhost:4000/addUsers
-    var insertObject={
-        name:req.body.name,
-        email:req.body.email,
-        username:req.body.username,
-        password:req.body.password,
-    };
-    response = users.addUsers(insertObject,function(err,data){
+router.post('/add', (req,res)=>{
+    /* {
+        "firstName":"Sean",
+        "lastName":"Clair",
+        "contact":"9875647382",
+        "email":"lohit@unboxsocial.com",
+        "password":"5787543444"
+    }; */
+    
+    response = users.addUser(req.body,function(err,data){
+        var response = {
+            success:0,
+            data:{}
+        };
+
+        if (data.insertId !==0) {
+            response.success = 1;
+            response.data = data;
+        }
+        
+        var emailData={
+            firstName:req.body.firstName,
+            lastName:req.body.lastName,
+            to:req.body.email,
+            password:req.body.password
+        };
+        email.accountCreatedEmail(emailData);
+
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(data));  
-    });
+        res.json({
+            response
+        });
+    }); 
 });
