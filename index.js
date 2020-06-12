@@ -19,12 +19,12 @@ app.post('/api/login',(req,res)=>{
         message:"Invalid Credentials"
     };
 
-    if (typeof req.body.loginid == "undefined" || req.body.loginid == "undefined") {
+    if (typeof req.body.email == "undefined" || req.body.password == "undefined") {
         res.json(invalidLogin);
     } else {
         var data={
-            email:req.body.loginid,
-            password:req.body.loginpass
+            email:req.body.email,
+            password:req.body.password
         };
         response = users.authentication(data,function(err,data){ 
             res.setHeader('Content-Type', 'application/json');
@@ -88,7 +88,7 @@ app.get('/api/user',verifyToken,(req,res)=>{
     }); 
 });
 
-app.post('/api/user',verifyToken,(req,res)=>{
+app.post('/api/user',(req,res)=>{
     /* {
         "firstName":"Sean",
         "lastName":"Clair",
