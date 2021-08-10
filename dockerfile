@@ -1,5 +1,5 @@
 FROM node:14.16.0-alpine
-WORKDIR /usr/src/app/api
+WORKDIR /usr/src/app/tuckshop_api
 COPY package*.json ./
 ENV DB_MYSQL_HOST localhost
 ENV DB_MYSQL_USER tuckshop
