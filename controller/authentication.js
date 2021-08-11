@@ -1,3 +1,4 @@
+const jwt                   =   require('jsonwebtoken');
 var config                  =   require('../config/config');
 var model_authentication    =   require('../model/authentication');
 var model_event             =   require('../model/events');

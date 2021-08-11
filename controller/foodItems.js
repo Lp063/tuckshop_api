@@ -1,10 +1,10 @@
-var config      =   require('../config/config');
-const jwt       =   require('jsonwebtoken');
-const foodItems =   require('../model/foodItems');
-var express     =   require('express');
-const multer    =   require('multer');
-var router      =   express.Router();
-const path      =   require('path');
+var config          =   require('../config/config');
+const jwt           =   require('jsonwebtoken');
+const foodItems     =   require('../model/foodItems');
+var express         =   require('express');
+const multer        =   require('multer');
+var router          =   express.Router();
+const path          =   require('path');
 
 var storage = multer.diskStorage({ 
   destination: __dirname+'/../assets/images/public/food/',
@@ -21,7 +21,13 @@ const upload = multer({
 /*
   Add food item
 */
-router.post('/', upload, async function (req, res) {
+const uploadFoodItemImage = multer({
+  storage:storage
+});//.single("image",2);
+
+router.post('/', 
+  uploadFoodItemImage.array("image",4),
+  async function (req, res) {//console.log("REQ",req.files);
   res.setHeader('Content-Type', 'application/json');
   var response={
     success:0,
@@ -36,10 +42,12 @@ router.post('/', upload, async function (req, res) {
       name:req.body.name,
       price:req.body.price,
       serving:req.body.serving,
-      image:req.file.filename
+      images:req.files,
+      eventId:req.body.eventid
     };
+    
     const insertState = await new foodItems(construct).addOne();
-
+    //const insertState = {};
     if (insertState) {
       response.success=1;
       response.data = insertState;

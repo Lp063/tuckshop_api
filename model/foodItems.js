@@ -2,22 +2,26 @@ var config      =   require('../config/config');
 
 class foodItems{
     
-    constructor({itemId,name,price,serving,image}){
+    constructor({itemId,name,price,serving,images,eventId}){
         this.itemId     =   itemId;
         this.name       =   name;
         this.price      =   price;
         this.serving    =   serving;
-        this.image      =   image;
+        this.images      =   images;
+        this.eventId      =   eventId;
     }
 
     addOne(){
+        
+        let imagesToStore = [];
         const item ={
             name:this.name,
             price:parseInt(this.price),
             serving:this.serving,
             currency:"inr",
-            img_src:this.image
+            event_id:this.eventId
         };
+
         return new Promise((resolve,reject)=>{
             config.mysqlConnection.getConnection( function(err, connection) {
                 if(err) { 
@@ -33,7 +37,58 @@ class foodItems{
                     }
                 });
             });
+        }).then((itemTableInsert)=>{
+            
+            this.images.map((data)=>{
+                /* {
+                    fieldname: 'image',
+                    originalname: 'tropic.jpg',
+                    encoding: '7bit',
+                    mimetype: 'image/jpeg',
+                    destination: 'C:\\Users\\Client\\Documents\\Tuckshop\\tuckshop_api\\controller/../assets/images/public/food/',
+                    filename: 'image_1628712644414.jpg',
+                    path: 'C:\\Users\\Client\\Documents\\Tuckshop\\tuckshop_api\\assets\\images\\public\\food\\image_1628712644414.jpg',
+                    size: 1635860
+                } */
+                imagesToStore.push([itemTableInsert.insertId,data.filename]);
+            });
+
+            config.mysqlConnection.getConnection( function(err, connection) {
+                if(err) { 
+                    return reject(err); 
+                }
+                
+                connection.query('INSERT into `tbl_item_images` (`tbl_items_id`,`file_name`) VALUES ?',[imagesToStore],(error, results, fields) => {
+                    /* console.log(error);
+                    connection.release();
+                    if(error) { 
+                        return reject(error);
+                    }else{
+                        return resolve(results);
+                    } */
+                });
+            });
         });
+
+        /* const imagesUploaded = new Promise((resolve,reject)=>{
+            config.mysqlConnection.getConnection( function(err, connection) {
+                if(err) { 
+                    return reject(err); 
+                }
+                
+                connection.query('INSERT into `tbl_item_images` (`tbl_items_id`,`file_name`) VALUES ?',[imagesToStore],(error, results, fields) => {
+                    console.log(error);
+                    connection.release();
+                    if(error) { 
+                        return reject(error);
+                    }else{
+                        return resolve(results);
+                    }
+                });
+            });
+        }); */
+
+        //console.log(imagesUploaded);
     }
 
     get(){

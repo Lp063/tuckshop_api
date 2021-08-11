@@ -2,7 +2,6 @@ const dotenv    =   require('dotenv');
 const path = require('path');
 var mysql       =   require('mysql');
 const util      =   require('util');
-const fs = require('fs');
 //var postmark    =   require("postmark");
 dotenv.config({path:path.join(__dirname,"../.env")});
 
@@ -16,15 +15,6 @@ const mysqlConnection = mysql.createPool({
     database : process.env.DB_MYSQL_DATABASE
 });
 
-
-
-/* mysqlConnection.connect((err)=>{
-    if (err) {
-        console.log(err);
-    }else{
-        console.log("mysql connected...");
-    }
-}); */
 
 //module.exports.emailClient = new postmark.Client(process.env.COMM_EMAIL_POSTMARK_API_TOKEN);
 
@@ -49,4 +39,5 @@ var emailDefaults={
 };
 
 exports.emailDefaults = emailDefaults;
+//exports.nosql_mongo =   nosql_mongo;
 exports.mysqlConnection =   mysqlConnection;
