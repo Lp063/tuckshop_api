@@ -88,11 +88,24 @@ class foodItems{
                 if(err) { 
                     return reject(err); 
                 }
-                connection.query('SELECT * FROM `tbl_items`',(error, results, fields) => {
+                //let query = 'SELECT * FROM `tbl_items`';
+                let query = 'SELECT ti.*, tim.id as image_id,tim.file_name as image_name FROM `tbl_items` as ti left join `tbl_item_images` as tim on ti.id = tim.tbl_items_id';
+                connection.query(query,(error, results, fields) => {
                     connection.release();
                     if(error) { 
                         return reject(error);
                     }else{
+
+                        /* let groupByIdLvl1 = {};
+                        results.map((object,index)=>{ 
+                            if(typeof groupByIdLvl1[object.id] === "undefined"){
+                            groupByIdLvl1[object.id] = [object];
+                        }else{
+                            groupByIdLvl1[object.id].push(object);
+                        }
+                        });
+
+                        console.log(groupByIdLvl1); */
                         return resolve(results);
                     }
                 });
@@ -108,12 +121,25 @@ class foodItems{
                 if(err) { 
                     return reject(err); 
                 }
-                connection.query('SELECT * FROM `tbl_items` where id = ?',[itemId],(error, results, fields) => {
+                connection.query('SELECT ti.*, tim.id as image_id,tim.file_name as image_name FROM `tbl_items` as ti left join `tbl_item_images` as tim on ti.id = tim.tbl_items_id where ti.id = ?',[itemId],(error, results, fields) => {
                     connection.release();
                     if(error) { 
                         return reject(error);
                     }else{
-                        return resolve(results);
+                        let data = [{
+                            id:results[0].id,
+                            event_id: results[0].event_id,
+                            name: results[0].name,
+                            price: results[0].price,
+                            created_on: results[0].created_on,
+                            serving: results[0].serving,
+                            currency: results[0].currency,
+                            itemImages:(results[0].image_id !== null)?results.map ((imgData)=>{
+                                return  {image_id:imgData.image_id,image_name:"/images/food/"+imgData.image_name};
+                            }):[]
+                        }];
+
+                        return resolve(data);
                     }
                 });
             });
