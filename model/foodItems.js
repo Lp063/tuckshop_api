@@ -22,7 +22,7 @@ class foodItems{
             event_id:this.eventId
         };
 
-        return new Promise((resolve,reject)=>{
+        const itemsTableInsert =  new Promise((resolve,reject)=>{
             config.mysqlConnection.getConnection( function(err, connection) {
                 if(err) { 
                     return reject(err); 
@@ -37,58 +37,49 @@ class foodItems{
                     }
                 });
             });
-        }).then((itemTableInsert)=>{
-            
-            this.images.map((data)=>{
-                /* {
-                    fieldname: 'image',
-                    originalname: 'tropic.jpg',
-                    encoding: '7bit',
-                    mimetype: 'image/jpeg',
-                    destination: 'C:\\Users\\Client\\Documents\\Tuckshop\\tuckshop_api\\controller/../assets/images/public/food/',
-                    filename: 'image_1628712644414.jpg',
-                    path: 'C:\\Users\\Client\\Documents\\Tuckshop\\tuckshop_api\\assets\\images\\public\\food\\image_1628712644414.jpg',
-                    size: 1635860
-                } */
-                imagesToStore.push([itemTableInsert.insertId,data.filename]);
-            });
-
-            config.mysqlConnection.getConnection( function(err, connection) {
-                if(err) { 
-                    return reject(err); 
-                }
-                
-                connection.query('INSERT into `tbl_item_images` (`tbl_items_id`,`file_name`) VALUES ?',[imagesToStore],(error, results, fields) => {
-                    /* console.log(error);
-                    connection.release();
-                    if(error) { 
-                        return reject(error);
-                    }else{
-                        return resolve(results);
-                    } */
-                });
-            });
         });
 
-        /* const imagesUploaded = new Promise((resolve,reject)=>{
-            config.mysqlConnection.getConnection( function(err, connection) {
-                if(err) { 
-                    return reject(err); 
-                }
-                
-                connection.query('INSERT into `tbl_item_images` (`tbl_items_id`,`file_name`) VALUES ?',[imagesToStore],(error, results, fields) => {
-                    console.log(error);
-                    connection.release();
-                    if(error) { 
-                        return reject(error);
-                    }else{
-                        return resolve(results);
+        const itemsImageTable = new Promise((resolve,reject)=>{
+            itemsTableInsert.then((itemTableInsert)=>{
+            
+                this.images.map((data)=>{
+                    /* {
+                        fieldname: 'image',
+                        originalname: 'tropic.jpg',
+                        encoding: '7bit',
+                        mimetype: 'image/jpeg',
+                        destination: 'C:\\Users\\Client\\Documents\\Tuckshop\\tuckshop_api\\controller/../assets/images/public/food/',
+                        filename: 'image_1628712644414.jpg',
+                        path: 'C:\\Users\\Client\\Documents\\Tuckshop\\tuckshop_api\\assets\\images\\public\\food\\image_1628712644414.jpg',
+                        size: 1635860
+                    } */
+                    imagesToStore.push([itemTableInsert.insertId,data.filename]);
+                });
+    
+                config.mysqlConnection.getConnection( function(err, connection) {
+                    if(err) { 
+                        reject(err); 
                     }
+                    
+                    connection.query('INSERT into `tbl_item_images` (`tbl_items_id`,`file_name`) VALUES ?',[imagesToStore],(error, results, fields) => {
+                        resolve(results);
+                    });
                 });
             });
-        }); */
+    
+        });
 
-        //console.log(imagesUploaded);
+        const finalResponse = new Promise((resolve,reject)=>{
+            Promise.all([itemsTableInsert, itemsImageTable])
+            .then(values => {
+                resolve(values);
+            })
+            .catch(error =>{
+                reject(error);
+            });
+        });
+        
+        return finalResponse;
     }
 
     get(){
