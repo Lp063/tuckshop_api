@@ -18,7 +18,7 @@ var foodItems       =   require('./controller/foodItems');
 var sales           =   require('./controller/sales');
 
 app.use('/authentication',authentication);
-app.use('/foodItems',foodItems);
+app.use('/foodItems',verifyToken,foodItems);
 app.use('/sales',sales);
 
 app.post('/api/login',(req,res)=>{
