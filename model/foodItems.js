@@ -3,12 +3,44 @@ var config      =   require('../config/config');
 class foodItems{
     
     constructor({itemId,name,price,serving,images,eventId}){
-        this.itemId     =   itemId;
-        this.name       =   name;
-        this.price      =   price;
-        this.serving    =   serving;
-        this.images      =   images;
-        this.eventId      =   eventId;
+        this.itemId  = itemId;
+        this.name    = name;
+        this.price   = price;
+        this.serving = serving;
+        this.images  = images;
+        this.eventId = eventId;
+    }
+
+    nameNotExist(items){
+
+        // const item ={
+        //     name:this.name,
+        //     price:parseInt(this.price),
+        //     serving:this.serving,
+        //     currency:"inr",
+        //     event_id:this.eventId
+        // };
+        items = items.map((e)=>{
+            return e.name;
+        });
+        const itemsExist =  new Promise((resolve,reject)=>{
+            config.mysqlConnection.getConnection( function(err, connection) {
+                if(err) { 
+                    return reject(err); 
+                }
+                
+                connection.query('SELECT * FROM `tbl_items` where name in (?)',items,(error, results, fields) => {
+                    connection.release();
+                    if(results) { 
+                        return reject(results);
+                    }else{
+                        return resolve(error);
+                    }
+                });
+            });
+        });
+        
+        return itemsExist;
     }
 
     addOne(){
@@ -21,6 +53,8 @@ class foodItems{
             currency:"inr",
             event_id:this.eventId
         };
+
+        //this.nameNotExist([item]).catch(found=>{}).then(found => {});return;
 
         const itemsTableInsert =  new Promise((resolve,reject)=>{
             config.mysqlConnection.getConnection( function(err, connection) {
@@ -70,7 +104,7 @@ class foodItems{
         });
 
         const finalResponse = new Promise((resolve,reject)=>{
-            Promise.all([itemsTableInsert, itemsImageTable])
+            Promise.all([itemExist,itemsTableInsert, itemsImageTable])
             .then(values => {
                 resolve(values);
             })
@@ -80,6 +114,8 @@ class foodItems{
         });
         
         return finalResponse;
+
+        
     }
 
     get(){
