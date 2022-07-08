@@ -104,7 +104,7 @@ class foodItems{
         });
 
         const finalResponse = new Promise((resolve,reject)=>{
-            Promise.all([itemExist,itemsTableInsert, itemsImageTable])
+            Promise.all([itemsTableInsert, itemsImageTable])
             .then(values => {
                 resolve(values);
             })
@@ -114,7 +114,6 @@ class foodItems{
         });
         
         return finalResponse;
-
         
     }
 

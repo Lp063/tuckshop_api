@@ -63,7 +63,7 @@ router.post('/',
 /*
   GET multiple food items
 */
-router.get('/', async function (req, res) {
+router.get('/', async function (req, res) {console.log(1111111);
 
   var response={
     success:0,

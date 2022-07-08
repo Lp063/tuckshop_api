@@ -66,15 +66,40 @@ function verifyToken(req, res, next){
     }else{
         const bearer        = bearerHeader.split(' ');
         const bearerToken   = bearer[1];
-        const jwtVerify     = jwt.verify(bearerToken, config.jwtPrivateKey);
-        if(jwtVerify){
-            req.token = jwtVerify.userData;
-        }else{
+        //const jwtVerify     = jwt.verify(bearerToken, config.jwtPrivateKey);
+
+        var verified = new Promise((resolve,reject) => {
+            jwt.verify(bearerToken, config.jwtPrivateKey,(err,decode)=>{
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(decode)
+                }
+            });
+        }).then( success => {
+            req.token = success;
+            next();
+        }).catch( error => {
             req.token = null;
-        }
-        next();
+            var data={
+                message:"invalid token"
+            }
+            res.status(404).send(data).end();
+        });
+
+        // if(jwtVerify){
+        //     req.token = jwtVerify.userData;
+        //     next();
+        // }else{
+        //     req.token = null;
+        //     res.sendStatus(404).end();
+        // }
     }
 }
+
+process.on("unhandledRejection",err =>{
+    console.log(err);
+})
 
 app.listen(4000,()=>{
     console.log("listening on port 4000");
